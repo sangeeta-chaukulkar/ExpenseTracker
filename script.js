@@ -1,7 +1,6 @@
 const signupbtn = document.getElementById('signup-btn');
 signupbtn.addEventListener('click',addUser);
 
-
 function addUser(){
     validate();
     const userName = document.getElementById('userName').value;
@@ -17,7 +16,10 @@ function addUser(){
     axios.post(`http://localhost:3000/signup`,data)
     .then(result=>{
         alert(result);
-    });   
+    })  
+    .catch(err => {
+        console.log(err)
+    })
 }
 
 function validate() {  

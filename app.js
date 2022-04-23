@@ -23,6 +23,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use(adminRoutes);
+app.use((req, res)=>{
+  res.sendFile(path.join(__dirname,`${req.url}`));
+})
 
 app.use(errorController.get404);
 

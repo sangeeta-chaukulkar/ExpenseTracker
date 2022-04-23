@@ -9,7 +9,7 @@ exports.postUser = (req, res) => {
   User.findOne({ where: { email: email } })
   .then(present => {
     if(present){
-      return('User already exists');
+      res.json('User already exists, Please Login');
     }
    bcrypt.hash(password,12)  
     .then(hashpassword=>{
@@ -22,7 +22,7 @@ exports.postUser = (req, res) => {
     })
     })
     .then(result => {
-      return('Created User');
+      res.json('Successfuly signed up');
     })
   })
     .catch(err => {
