@@ -1,14 +1,15 @@
 
 const loginbtn = document.getElementById('login-btn');
 loginbtn.addEventListener('click',userLogin);
-function userLogin(){
-    ValidateEmail(email);
+function userLogin(e){
+    e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    axios.get(`http://localhost:3000/login`)
+    ValidateEmail(email);
+    axios.post(`http://localhost:3000/login`,{email:email,password:password})
     .then(result=>{
         if(result){
-            alert("Login successfully");
+            alert(result.data.message);
         }
     })  
     .catch(err => {
@@ -18,9 +19,9 @@ function userLogin(){
 
 function ValidateEmail(inputText)
 {
-    const email = document.getElementById('email');
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    if(inputText.value.match(mailformat))
+    // let input=inputText.value;
+    if(inputText.match(mailformat))
     {
     return true;
     }

@@ -1,6 +1,10 @@
 const path = require('path');
-
 const express = require('express');
+const dotenv = require('dotenv');
+dotenv.config();
+
+// var skey=require('crypto').randomBytes(64).toString('hex');
+
 const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
@@ -21,7 +25,7 @@ app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+app.set('view engine', 'html');
 app.use(adminRoutes);
 app.use((req, res)=>{
   res.sendFile(path.join(__dirname,`${req.url}`));

@@ -15,7 +15,7 @@ function addUser(){
     }
     axios.post(`http://localhost:3000/signup`,data)
     .then(result=>{
-        alert(result);
+        alert(result.data.message);
     })  
     .catch(err => {
         console.log(err)
