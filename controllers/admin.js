@@ -1,6 +1,17 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
+exports.login = (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  User.findOne({ where: { email: email ,password:password} })
+  .then(present => {
+    if(present){
+      res.json('Present');
+    }
+  })
+}
+
 exports.postUser = (req, res) => {
   const name = req.body.name;
   const email = req.body.email;
