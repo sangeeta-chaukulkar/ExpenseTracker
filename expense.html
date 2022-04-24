@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="expense.css">
+
+    <title>Expense</title>
+</head>
+<body>
+    <div class="container">
+                <div class="all">
+                <form action="#" id="form1" >
+                    <br><br>
+                    <label for="amt">Expense Amount</label>
+                    <input type="number" id="amt" name="quantity" placeholder="Expense amount" min="1" required><br><br>
+                    <label for="description">Description </label>
+                    <input type="text" id="description" name="desc" placeholder="Expense Description" required><br><br>
+                    <label for="category">Choose a category</label>
+                    <select id="category"  name="categ" placeholder="Choose category" required>
+                        <option value="Trip">Trip</option>
+                        <option value="TeamCelebration">Team Celebration</option>
+                        <option value="Internet Charges">Internet Charges</option>
+                        <option value="fuel">Fuel</option>
+                        <option value="food">Food</option>
+                        <option value="Electricity">Electricity</option>
+                        <option value="Movie">Movie</option>
+                      </select>
+                    <br><br>
+    
+                    <input type="submit" id="submits" value="Add Expense">
+                    <input type="submit" id="updates" value="Update">
+                </form>
+                </div>
+    </div>
+    <div class=".container-fluid">
+        <p>List of Expenses</p>
+        <div id="expenseList"></div>
+    </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"></script>
+</body>
+</html>

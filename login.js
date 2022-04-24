@@ -10,6 +10,7 @@ function userLogin(e){
     .then(result=>{
         if(result){
             alert(result.data.message);
+            window.location.replace('../expense.html');
         }
     })  
     .catch(err => {

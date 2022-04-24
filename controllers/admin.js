@@ -15,6 +15,7 @@ exports.login = (req, res) => {
       if(isMatch){
         jwt.sign({id:user.dataValues.id,email:email}, process.env.TOKEN_SECRET, { expiresIn: '1800s' },(err,token)=>{
           res.send({token:token,message:'Login successfully'});
+          
         });
       }
       else{
