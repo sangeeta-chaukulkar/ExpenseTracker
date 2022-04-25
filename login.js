@@ -1,4 +1,9 @@
 
+const forgotpassbtn = document.getElementById('forgotpass-btn');
+forgotpassbtn.addEventListener('click',()=>{
+    window.location.replace('forgotpassword.html');
+});
+
 const loginbtn = document.getElementById('login-btn');
 loginbtn.addEventListener('click',userLogin);
 function userLogin(e){

@@ -16,9 +16,18 @@ body{
 }
 .login-form{
     width: 400px;
-    height:400px;
+    height:450px;
     box-shadow:0 0 3px 0 rgba(0, 0, 0, 0.3);
     background:#fff;
+    padding:20px;
+    margin:8% auto 0;
+    text-align:center;
+}
+.forgotpass-form{
+    width: 400px;
+    height:200px;
+    box-shadow:0 0 3px 0 rgba(4, 118, 80, 0.3);
+    background:rgb(6, 151, 107);
     padding:20px;
     margin:8% auto 0;
     text-align:center;
@@ -32,7 +41,7 @@ body{
     margin: 10px;
     width:60%;
 }
-#login-btn{
+#login-btn,#forgotpass-btn{
     background-color:#1c8abd;
     margin: 10px;
     width:60%;
@@ -52,6 +61,14 @@ img{
     border:1px solid #999;
     outline:none;
 }
+#forgotemail{
+    border-radius: 20px;
+    padding:10px;
+    margin: 15px;
+    width: 90%;
+    border:1px solid #999;
+
+}
 button{
     color:#fff;
     border-radius: 20px;
@@ -61,4 +78,15 @@ button{
     border:none;
     outline:none;
     cursor:pointer;
+}
+#forgotsubmit{
+    color:rgb(196, 11, 11);
+    border-radius: 20px;
+    padding:10px;
+    margin: 30px 0;
+    width: 80%;
+    border:none;
+    outline:none;
+    cursor:pointer;
+
 }
