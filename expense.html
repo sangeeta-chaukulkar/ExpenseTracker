@@ -14,11 +14,11 @@
                 <form action="#" id="form1" >
                     <br><br>
                     <label for="amt">Expense Amount</label>
-                    <input type="number" id="amt" name="quantity" placeholder="Expense amount" min="1" required><br><br>
+                    <input type="number" id="amount" name="amount" placeholder="Expense amount" min="1" required><br><br>
                     <label for="description">Description </label>
-                    <input type="text" id="description" name="desc" placeholder="Expense Description" required><br><br>
+                    <input type="text" id="description" name="description" placeholder="Expense Description" required><br><br>
                     <label for="category">Choose a category</label>
-                    <select id="category"  name="categ" placeholder="Choose category" required>
+                    <select id="category"  name="category" placeholder="Choose category" required>
                         <option value="Trip">Trip</option>
                         <option value="TeamCelebration">Team Celebration</option>
                         <option value="Internet Charges">Internet Charges</option>
@@ -39,5 +39,6 @@
         <div id="expenseList"></div>
     </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"></script>
+  <script src="expense.js"></script>
 </body>
 </html>

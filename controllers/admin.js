@@ -1,8 +1,12 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
+const Expense = require('../models/expense');
+
+
 const jwt = require('jsonwebtoken');
 
 exports.login = (req, res) => {
+  console.log("h");
   const email = req.body.email;
   const password = req.body.password;
   User.findOne({ where: { email: email} })
@@ -14,6 +18,7 @@ exports.login = (req, res) => {
     .then(isMatch=>{
       if(isMatch){
         jwt.sign({id:user.dataValues.id,email:email}, process.env.TOKEN_SECRET, { expiresIn: '1800s' },(err,token)=>{
+          localStorage.setItem('token',JSON.stringify({token:token}));
           res.send({token:token,message:'Login successfully'});
           
         });
@@ -57,12 +62,42 @@ exports.postUser = (req, res) => {
       console.log(err);
     });
 };
+const authenticate= (req, res,next) => {
+  try{
+    const token=req.header('authorization');
+    const userid=Number(jwt.verify(token,process.env.TOKEN_SECRET));
+    User.findByPk(userid).then(user=>{
+      req.user=user;
+      next();
+    }).catch(err => {throw new Error(err)})
+  }
+  catch(err){
+    return res.status(401).json({ success: false});
+  }
+}
+exports.postExpense = authenticate,(req, res) => {
+  const amount = req.body.amount;
+  const description = req.body.description;
+  const category = req.body.category;
+  req.user.createExpense({
+      amount: amount,
+      description: description,
+      category: category
+    })
+    .then(expense => {
+      return res.status(201).json({ expense, message: 'Expenses added successfuly'});
+      
+    })
+    .catch(err => {
+      return res.status(402).json({ message: err});
+    });
+};
 
-// exports.getUser = (req, res, next) => {
-//   User.findAll()
-//     .then(users => {
-//       res.json({users});
-//     })
-// };
+exports.getExpenses = (req, res, next) => {
+  Expense.findAll()
+    .then(expenses => {
+      res.json({expenses});
+    })
+};
 
 
