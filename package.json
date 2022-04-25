@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/sangeeta-chaukulkar/ExpenseTracker/issues"
   },
-  "homepage": "https://github.com/sangeeta-chaukulkar/ExpenseTracker#readme"
+  "homepage": "https://github.com/sangeeta-chaukulkar/ExpenseTracker#readme",
+  "dependencies": {
+    "razorpay": "^2.8.1"
+  }
 }

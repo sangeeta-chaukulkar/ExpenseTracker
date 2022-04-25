@@ -62,3 +62,15 @@ button{
     outline:none;
     cursor:pointer;
 }
+#rayzorpay-btn{
+    margin:2px;
+    top:2px;
+    padding:5px;
+    width:120px;
+    background-color:#1717cb;
+
+}
+#pay{
+    margin:20px;
+    text-align:right;
+}

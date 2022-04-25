@@ -8,9 +8,16 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="pay">
+        <button type="submit" id="rayzorpay-btn">Buy premium membership
+            <!-- <a href="https://razorpay.com/">Buy premium membership</a> -->
+        </button>
+    </div>
+    
     <div class="login-form">
         <img src="/images/signup-logo.JPG">
             <h1>Login</h1>
+             
             <form action="/login.html" method="post">
              <div>
                 <input type="email" id="email" class="input" name="email" placeholder="email" required >
@@ -22,6 +29,7 @@
              <p>New member? <a href="signup.html">Sign Up</a></p>
             </form>
     </div>  
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"></script>
     <script src="login.js"></script>
 </body>

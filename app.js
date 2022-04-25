@@ -12,6 +12,7 @@ const sequelize = require('./util/database');
 
 const User = require('./models/user');
 const Expense = require('./models/expense');
+const Order = require('./models/orders');
 
 
 const app = express();
@@ -20,6 +21,8 @@ app.use(cors())
 
 
 const adminRoutes = require('./routes/admin');
+const purchaseRoutes = require('./routes/purchase');
+app.use('/purchase', purchaseRoutes);
 
 // app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
@@ -28,8 +31,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.set('view engine', 'html');
 app.use(adminRoutes);
+
 User.hasMany(Expense);
 Expense.belongsTo(User);
+
+User.hasMany(Order);
+Order.belongsTo(User);
 
 
 app.use((req, res)=>{
