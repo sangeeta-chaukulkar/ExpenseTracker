@@ -25,7 +25,7 @@ const purchaseRoutes = require('./routes/purchase');
 app.use('/purchase', purchaseRoutes);
 
 // app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(bodyParser.json());
 
 app.use(express.static(path.join(__dirname, 'public')));
 

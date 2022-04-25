@@ -12,4 +12,9 @@ router.post('/login', adminController.login);
 router.post('/expense', adminController.postExpense);
 router.get('/expense', adminController.getExpenses);
 
+router.get('/users', adminController.getUsers);
+router.post('/userExpenses', adminController.getUserExpenses);
+
+
+
 module.exports = router;

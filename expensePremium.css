@@ -56,21 +56,21 @@ body {
       height:60px;
       width:120px;
     }
-    #submits,#updates{
+    #submits{
       height:50px;
       width:120px;
       
     }
-    #rayzorpay-btn{
-      margin:2px;
-      top:2px;
-      padding:5px;
-      width:120px;
-      background-color:#1717cb;
-      color:white;
-  
-  }
-  #pay{
-      margin:20px;
-      text-align:right;
-  }
+    #userList{
+        margin:2px;
+        top:2px;
+        padding:5px;
+        width:120px;
+        background-color:#1717cb;
+        color:white;
+    
+    }
+    #users{
+        margin:20px;
+        text-align:right;
+    }
