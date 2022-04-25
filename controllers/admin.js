@@ -1,12 +1,50 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const Expense = require('../models/expense');
-
-
 const jwt = require('jsonwebtoken');
 
+const uuid = require('uuid');
+const sgMail = require('@sendgrid/mail');
+const Forgotpassword = require('../models/forgotpassword');
+
+const forgotpassword = async (req, res) => {
+    try {
+        const { email } =  req.body;
+        const user = await User.findOne({where : { email }});
+        if(user){
+            const id = uuid.v4();
+            user.createForgotpassword({ id , active: true })
+                .catch(err => {
+                    throw new Error(err)
+                })
+            sgMail.setApiKey(process.env.SENGRID_API_KEY)
+            const msg = {
+                to: email, 
+                from: 's.a.12345@gmail.com', 
+                subject: 'SendGrid email',
+                text: 'SendGrid with Node.js',
+                html: `<p>Hi</p>`,
+            }
+            sgMail
+            .send(msg)
+            .then((response) => {
+                return res.status(response[0].statusCode).json({message: 'Hello there!', sucess: true})
+            })
+            .catch((error) => {
+                throw new Error(error);
+            })
+        }else {
+            throw new Error('User doesnt exist')
+        }
+    } catch(err){
+        console.error(err)
+        return res.json({ message: err, sucess: false });
+    }
+}
+
+
+
 exports.login = (req, res) => {
-  console.log("h");
   const email = req.body.email;
   const password = req.body.password;
   User.findOne({ where: { email: email} })

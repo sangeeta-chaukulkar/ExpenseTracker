@@ -14,7 +14,7 @@ router.get('/expense', adminController.getExpenses);
 
 router.get('/users', adminController.getUsers);
 router.post('/userExpenses', adminController.getUserExpenses);
-
+router.use('/forgotpassword', adminController.forgotpassword)
 
 
 module.exports = router;
