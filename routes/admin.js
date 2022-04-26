@@ -13,7 +13,10 @@ router.post('/expense', adminController.postExpense);
 router.get('/expense', adminController.getExpenses);
 
 router.get('/users', adminController.getUsers);
-router.post('/userExpenses', adminController.getUserExpenses);
+router.get('/userExpenses', adminController.getUserExpenses);
+router.post('/userExpensess', adminController.getUserExpensess);
+
+
 router.use('/forgotpassword', adminController.forgotpassword)
 
 

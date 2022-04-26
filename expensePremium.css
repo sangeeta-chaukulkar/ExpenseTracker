@@ -6,21 +6,21 @@ body {
     background-size: auto;
 }
 
-  .container {
+  #expenseList {
       border: 2px solid #6200ff;
       border-radius: 2px;
       top:5px;
       padding: 20px;
-      width: 400px;
-      height:400px;
+      width: 700px;
       margin:2% auto 0;
       text-align:center;
       justify-content: center;
       box-shadow:0 0 3px 0 rgba(0, 0, 0, 0.3);
-      background:#fff;
     }
-    .container-fluid p{
+    #expenseMain, h4 {
       text-align:center;
+      color:white;
+      margin:2% auto 0;
     }
   .all label {
       font-family:verdana;
@@ -61,11 +61,12 @@ body {
       width:120px;
       
     }
-    #userList{
+    #userList,#downloadexpense,#dailyexpense,#weeklyexpense,#monthlyexpense{
         margin:2px;
         top:2px;
-        padding:5px;
+        padding:14px;
         width:120px;
+        height:60px;
         background-color:#1717cb;
         color:white;
     
@@ -73,4 +74,27 @@ body {
     #users{
         margin:20px;
         text-align:right;
+    }
+    #expenseTable {
+      font-family: Arial, Helvetica, sans-serif;
+      border-collapse: collapse;
+      width: 95%;
+      text-align:center;
+    }
+    
+    #expenseTable td, #expenseTable th {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    
+    #expenseTable tr:nth-child(even){background-color: #f2f2f2;}
+    
+    #expenseTable tr:hover {background-color: #ddd;}
+    
+    #expenseTable th {
+      padding-top: 12px;
+      padding-bottom: 12px;
+      text-align: left;
+      background-color: #04AA6D;
+      color: white;
     }

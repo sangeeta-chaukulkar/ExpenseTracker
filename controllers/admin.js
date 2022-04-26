@@ -141,9 +141,8 @@ exports.getExpenses = (req, res, next) => {
       res.json({expenses});
     })
 };
-exports.getUserExpenses = (req, res, next) => {
-  const userid = req.body.userId;
-  Expense.findOne({ where: { userId: userid } })
+exports.getUserExpenses = authenticate,(req, res, next) => {
+  Expense.findOne({ where: { userId: req.user } })
     .then(expenses => {
       if(!expenses){
         return res.status(404).json( { message: "Not Found" });
@@ -151,6 +150,18 @@ exports.getUserExpenses = (req, res, next) => {
       res.json({expenses});
     })
 };
+
+exports.getUserExpensess = (req, res, next) => {
+  const userId=req.body.userId;
+  Expense.findOne({ where: { userId: userId } })
+    .then(expenses => {
+      if(!expenses){
+        return res.status(404).json( { message: "Not Found" });
+      }
+      res.json({expenses});
+    })
+};
+
 
 exports.getUsers = (req, res, next) => {
   User.findAll()
