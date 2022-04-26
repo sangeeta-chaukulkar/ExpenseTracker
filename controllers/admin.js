@@ -7,7 +7,7 @@ const uuid = require('uuid');
 const sgMail = require('@sendgrid/mail');
 const Forgotpassword = require('../models/forgotpassword');
 
-const forgotpassword = async (req, res) => {
+exports.forgotpassword = async (req, res) => {
     try {
         const { email } =  req.body;
         const user = await User.findOne({where : { email }});
@@ -20,7 +20,7 @@ const forgotpassword = async (req, res) => {
             sgMail.setApiKey(process.env.SENGRID_API_KEY)
             const msg = {
                 to: email, 
-                from: 's.a.12345@gmail.com', 
+                from: 'uttamchaukulkar@gmail.com', 
                 subject: 'SendGrid email',
                 text: 'SendGrid with Node.js',
                 html: `<p>Hi</p>`,
