@@ -15,9 +15,25 @@ async function expenses(e){
       </tr>`;
     }
     expenseList.innerHTML+=`</table>`;
-
 }
 expenses();
+function download(){
+        axios.get('http://localhost:3000/download', { headers: {"Authorization" : token} })
+        .then((response) => {
+            if(response.status === 201){
+                var a = document.createElement("a");
+                a.href = response.data.fileUrl;
+                a.download = 'myexpense.csv';
+                a.click();
+            } else {
+                throw new Error(response.data.message)
+            }
+        })
+        .catch((err) => {
+            showError(err)
+        });
+    }
+
 
 document.getElementById('userList').onclick = async function (e) {
     const response  = await axios.get('http://localhost:3000/users');
@@ -38,4 +54,3 @@ document.getElementById('userList').onclick = async function (e) {
     }
     
 }
-

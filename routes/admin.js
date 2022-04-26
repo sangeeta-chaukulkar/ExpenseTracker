@@ -3,6 +3,8 @@ const path = require('path');
 const express = require('express');
 
 const adminController = require('../controllers/admin');
+const authMiddleware = require('../middleware/auth');
+
 
 const router = express.Router();
 
@@ -16,7 +18,7 @@ router.get('/users', adminController.getUsers);
 router.get('/userExpenses', adminController.getUserExpenses);
 router.post('/userExpensess', adminController.getUserExpensess);
 
-
+router.get('/download',authMiddleware.authenticate,adminController.downloadexpense)
 router.use('/forgotpassword', adminController.forgotpassword)
 
 

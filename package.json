@@ -18,6 +18,7 @@
   "homepage": "https://github.com/sangeeta-chaukulkar/ExpenseTracker#readme",
   "dependencies": {
     "@sendgrid/mail": "^7.6.2",
+    "aws-sdk": "^2.1121.0",
     "razorpay": "^2.8.1",
     "uuid": "^8.3.2"
   }
