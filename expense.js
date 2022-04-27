@@ -4,8 +4,8 @@ if (typeof localStorage === "undefined" || localStorage === null) {
 }
 var expenseLst = document.getElementById('expenseList');
 
-const addExpense = document.getElementById('submits');
-addExpense.addEventListener('click',addExpense);
+const addExpenses = document.getElementById('submits');
+addExpenses.addEventListener('click',addExpense);
 
 function addExpense(e){
   e.preventDefault();

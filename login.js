@@ -15,10 +15,10 @@ function userLogin(e){
     .then(result=>{
         if(result){
             if(result.data.message === 'Premium User'){
-                window.location.href('../expensePremium.html');
+                window.location.replace('../expensePremium.html');
             }
             else{
-                window.location.href('../expense.html');
+                window.location.replace('../expense.html');
             }    
         }
         else {

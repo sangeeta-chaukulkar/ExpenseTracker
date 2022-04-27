@@ -46,7 +46,12 @@ body {
     width: 50%;
     border:1px solid #999;
     outline:none;
-
+    }
+    #itemsPerPage{
+      padding:1px;
+      margin:1px;
+      width:10%;
+      text-align:center;
     }
     #da{
       height:60px;

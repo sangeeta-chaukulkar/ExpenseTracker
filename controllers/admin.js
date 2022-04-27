@@ -11,7 +11,7 @@ const sgMail = require('@sendgrid/mail');
 const Forgotpassword = require('../models/forgotpassword');
 const AWS=require('aws-sdk');
 
-const ITEMS_PER_PAGE = 10;
+const ITEMS_PER_PAGE = localStorage.getItem('ITEMS_PER_PAGE');
 
 exports.downloadExpenses =  async (req, res) => {
   try {

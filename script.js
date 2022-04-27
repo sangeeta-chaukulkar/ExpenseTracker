@@ -1,7 +1,8 @@
 const signupbtn = document.getElementById('signup-btn');
 signupbtn.addEventListener('click',addUser);
 
-function addUser(){
+function addUser(e){
+    e.preventDefault();
     validate();
     const userName = document.getElementById('userName').value;
     const email = document.getElementById('email').value;
@@ -16,6 +17,14 @@ function addUser(){
     axios.post(`http://localhost:3000/signup`,data)
     .then(result=>{
         alert(result.data.message);
+        if(result.data.message === 'User already exists, Please Login' || 'Successfuly signed up'){
+            window.location.replace('../login.html');
+        }
+        else{
+            window.location.replace('../signup.html');
+        }    
+
+
     })  
     .catch(err => {
         console.log(err)

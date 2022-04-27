@@ -56,6 +56,8 @@ document.getElementById('userList').onclick = async function (e) {
 }
 window.addEventListener('DOMContentLoaded',()=>{
     const token=localStorage.getItem('token');
+    const ITEMS_PER_PAGE=document.getElementById('itemsPerPage').value;
+    localStorage.setItem('ITEMS_PER_PAGE',ITEMS_PER_PAGE);
     axios.get('http://localhost:3000/getexpense',{headers:{"Authorization":token}})
                 .then(expenses => {  
                 const parentNodeCart=document.getElementById('expensePagination');
