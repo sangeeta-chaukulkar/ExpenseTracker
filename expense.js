@@ -1,4 +1,7 @@
-
+if (typeof localStorage === "undefined" || localStorage === null) {
+  var LocalStorage = require('node-localstorage').LocalStorage;
+  localStorage = new LocalStorage('./scratch');
+}
 var expenseLst = document.getElementById('expenseList');
 
 const addExpense = document.getElementById('submits');

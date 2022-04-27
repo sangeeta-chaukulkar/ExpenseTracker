@@ -17,6 +17,7 @@ router.get('/expense', adminController.getExpenses);
 router.get('/users', adminController.getUsers);
 router.get('/userExpenses', adminController.getUserExpenses);
 router.post('/userExpensess', adminController.getUserExpensess);
+router.get('/getexpense',authMiddleware.authenticate, adminController.getExpense);
 
 router.get('/download',authMiddleware.authenticate,adminController.downloadexpense)
 router.use('/forgotpassword', adminController.forgotpassword)

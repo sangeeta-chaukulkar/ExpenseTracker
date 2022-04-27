@@ -2,13 +2,16 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const Expense = require('../models/expense');
 const jwt = require('jsonwebtoken');
-
+if (typeof localStorage === "undefined" || localStorage === null) {
+  var LocalStorage = require('node-localstorage').LocalStorage;
+  localStorage = new LocalStorage('./scratch');
+}
 const uuid = require('uuid');
 const sgMail = require('@sendgrid/mail');
 const Forgotpassword = require('../models/forgotpassword');
 const AWS=require('aws-sdk');
 
-
+const ITEMS_PER_PAGE = 10;
 
 exports.downloadExpenses =  async (req, res) => {
   try {
@@ -226,7 +229,35 @@ exports.downloadexpense= async (req, res, next) => {
     res.status(500).json({fileUrl:'',success:false,err:err})
 
   }
-
 }
+
+exports.getExpense=authenticate, (req, res, next) => {
+  const page = +req.query.page || 1;
+  let totalItems;
+  Expense.count({ where: { userId: req.user} })
+    .then(numExpense => {
+      totalItems = numExpense;
+      return Expense.findAll({ where: { userId: userId } },{ offset: ((page - 1) * ITEMS_PER_PAGE) , limit: ITEMS_PER_PAGE });
+    }) 
+    .then(expenses => {
+      console.log(expenses);
+      res.json({
+        currentPage:page,
+        prods: expenses,
+        totalexpenses: totalItems,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+}
+
 
 
