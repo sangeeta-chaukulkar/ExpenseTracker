@@ -2,9 +2,13 @@ const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config();
-const helmet=require('helmet');
+// const helmet=require('helmet');
 const morgan=require('morgan');
 const fs=require('fs');
+// const https=require('https');
+
+// const privateKey=fs.readFileSync('server.key');
+// const certificate=fs.readFileSync('server.cert');
 
 // var skey=require('crypto').randomBytes(64).toString('hex');
 
@@ -22,7 +26,7 @@ const accessLogStream =fs.createWriteStream(path.join(__dirname,'access.log'),{f
 const app = express();
 var cors = require('cors')
 app.use(cors())
-app.use(helmet());
+// app.use(helmet());
 
 app.use(morgan('combined',{stream:accessLogStream}));
 
@@ -39,7 +43,7 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.set('view engine', 'html');
+// app.set('view engine', 'html');
 app.use(adminRoutes);
 
 
@@ -54,7 +58,7 @@ Forgotpassword.belongsTo(User);
 
 
 app.use((req, res)=>{
-  res.sendFile(path.join(__dirname,`${req.url}`));
+  res.sendFile(path.join(__dirname,`public/${req.url}`));
 })
 
 app.use(errorController.get404);
@@ -64,7 +68,11 @@ sequelize
   // .sync({ force: true })
   .sync()
   .then(result => {
+    //  https.createServer
+    // ({key:privateKey,cert:certificate},app)
+    // .listen(process.env.PORT || 3000);
      app.listen(process.env.PORT || 3000);;
+
     // console.log(result);
   })
   .catch(err => {
