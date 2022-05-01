@@ -13,6 +13,7 @@ function userLogin(e){
     ValidateEmail(email);
     axios.post(`http://localhost:3000/login`,{email:email,password:password})
     .then(result=>{
+        localStorage.setItem('token',result.data.token);
         if(result){
             if(result.data.message === 'Premium User'){
                 window.location.replace('../expensePremium.html');

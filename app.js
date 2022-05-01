@@ -2,6 +2,9 @@ const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config();
+const helmet=require('helmet');
+const morgan=require('morgan');
+const fs=require('fs');
 
 // var skey=require('crypto').randomBytes(64).toString('hex');
 
@@ -15,10 +18,14 @@ const Expense = require('./models/expense');
 const Order = require('./models/orders');
 const Forgotpassword = require('./models/forgotpassword');
 
-
+const accessLogStream =fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'})
 const app = express();
 var cors = require('cors')
 app.use(cors())
+app.use(helmet());
+
+app.use(morgan('combined',{stream:accessLogStream}));
+
 
 
 const adminRoutes = require('./routes/admin');
@@ -34,6 +41,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.set('view engine', 'html');
 app.use(adminRoutes);
+
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
@@ -56,7 +64,7 @@ sequelize
   // .sync({ force: true })
   .sync()
   .then(result => {
-     app.listen(3000);;
+     app.listen(process.env.PORT || 3000);;
     // console.log(result);
   })
   .catch(err => {

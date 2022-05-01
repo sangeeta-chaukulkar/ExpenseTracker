@@ -12,13 +12,11 @@
         <button type="submit" id="userList">List of users
         </button>
         <button onclick="download()" id="downloadexpense">Download Expenses</button>
-        <button id="dailyexpense">Daily Expenses</button>
-        <button id="weeklyexpense">Weekly Expenses</button>
-        <button id="monthlyexpense">Monthly Expenses</button>
+        <button  onclick="dailyexpenses()" id="dailyexpense">Daily Expenses</button>
+        <button onclick="weeklyexpenses()" id="weeklyexpense">Weekly Expenses</button>
+        <button onclick="getmonthlyexpenses()" id="monthlyexpense">Monthly Expenses</button>
     </div>
-    <div id="expensePagination">
-                
-    </div>
+
 
     <div id="expenseMain">
         <h4>Day to Day Expenses</h4>
@@ -30,7 +28,15 @@
             <option value="20">20</option>
           </select>
 
-        <div id="expenseList"></div>
+        <div id="expenseList">
+          <table id="expenseTable">
+
+          </table>
+        </div>
+        <div id="expensePagination">
+                
+        </div>
+        <div id="backbtn"></div>
     </div>
 
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>

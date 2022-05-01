@@ -1,7 +1,6 @@
-if (typeof localStorage === "undefined" || localStorage === null) {
-  var LocalStorage = require('node-localstorage').LocalStorage;
-  localStorage = new LocalStorage('./scratch');
-}
+
+const token=localStorage.getItem('token');
+
 var expenseLst = document.getElementById('expenseList');
 
 const addExpenses = document.getElementById('submits');
@@ -12,46 +11,74 @@ function addExpense(e){
     const amount = document.getElementById('amount').value;
     const description = document.getElementById('description').value;
     const category = document.getElementById('category').value;
-    const token=localStorage.getItem('token');
     data={
       amount: amount,
       description: description,
       category: category
     }
-    axios.post(`http://localhost:3000/expense`,data,{headers:{"Authorization":token}})
+    axios.post(`http://localhost:3000/expense`,data,{headers:{"authorization":token}})
     .then(result=>{
         alert(result.data.message);
+        console.log(result);
+        addNewExpensetoUI(result.data.expense);
     })  
     .catch(err => {
         console.log(err)
     })
 }
 
-expenseDeatils();
-function expenseDeatils(){
-    axios.get("http://localhost:3000/expense")
-    .then((response) => {
-        console.log(response);
+function addNewExpensetoUI(expense){
+  const expenseElemId = `expense-${expense.id}`;
+  expenseLst.innerHTML += `
+      <li id=${expenseElemId}>
+          ${expense.amount} - ${expense.description} - ${expense.category}
+          <button onclick='deleteExpense(event, ${expense.id})'>
+              Delete Expense
+          </button>
+      </li>`
+}
+
+window.addEventListener('load', (e)=> {
+  e.preventDefault();
+  console.log(localStorage);
+  axios.get('http://localhost:3000/expense', { headers: {"authorization" : token} }).then(response => {
+      if(response.status === 200){
         expenseLst.innerHTML="";
-        for (let i = 0; i < response.data.length; i++) {   
-            var newLi =  document.createElement('li');
-            var newLiText = document.createTextNode(response.data[i].amount);
-            var newLiText1 = document.createTextNode(response.data[i].description);
-            var newLiText2 = document.createTextNode(response.data[i].category);
-            newLi.appendChild(newLiText);
-            newLi.appendChild (document.createTextNode ("    "));
-            newLi.appendChild(newLiText1);
-            newLi.appendChild (document.createTextNode ("       "));
-            newLi.appendChild(newLiText2);
-            expenseLst.appendChild(newLi);   
-        }
-      })
-    .catch((err) => {
-        console.log(err)});
+          response.data.expenses.forEach(expense => {
+            const expenseElemId = `expense-${expense.id}`;
+            expenseLst.innerHTML += `
+            <li id=${expenseElemId}>
+            ${expense.amount} - ${expense.description} - ${expense.category}
+            <button onclick='deleteExpense(event, ${expense.id})'>
+              Delete Expense
+           </button>
+           </li>`;
+          })
+      } else {
+          throw new Error();
+      }
+  })
+});
+function deleteExpense(e, expenseid) {
+  axios.delete(`http://localhost:3000/deleteexpense/${expenseid}`, { headers: {"authorization" : token} })
+  .then((response) => {
+  if(response.status === 204){
+          removeExpensefromUI(expenseid);
+      } else {
+          throw new Error('Failed to delete');
+      }
+  }).catch((err => {
+    document.body.innerHTML += `<div style="color:red;"> ${err}</div>`
+  }))
+}
+
+function removeExpensefromUI(expenseid){
+  const expenseElemId = `expense-${expenseid}`;
+  document.getElementById(expenseElemId).remove();
 }
 
 document.getElementById('rayzorpay-btn').onclick = async function (e) {
-  const response  = await axios.get('http://localhost:3000/purchase/premiummembership', { headers: {"Authorization" : token} });
+  const response  = await axios.get('http://localhost:3000/purchase/premiummembership', { headers: {"authorization" : token} });
   console.log(response);
   var options =
   {
@@ -72,7 +99,7 @@ document.getElementById('rayzorpay-btn').onclick = async function (e) {
        axios.post('http://localhost:3000/purchase/updatetransactionstatus',{
            order_id: options.order_id,
            payment_id: response.razorpay_payment_id,
-       }, { headers: {"Authorization" : token} }).then(() => {
+       }, { headers: {"authorization" : token} }).then(() => {
            alert('You are a Premium User Now')
        }).catch(() => {
            alert('Something went wrong. Try Again!!!')

@@ -5,7 +5,7 @@ const Forgotpassword = require('../models/forgotpassword');
 
 const resetpassword = (req, res) => {
     const id =  req.params.id;
-    Forgotpassword.findOne({ where : { id }}).then(forgotpasswordrequest => {
+    Forgotpassword.findOne({ where : { id:id }}).then(forgotpasswordrequest => {
         console.log(forgotpasswordrequest);
         if(forgotpasswordrequest){
             forgotpasswordrequest.update({ active: false});
