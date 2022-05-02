@@ -4,7 +4,7 @@ const token=localStorage.getItem('token');
 
 async function getmonthlyexpenses(e){
     const expenseTable=document.getElementById('expenseTable');
-    const response  = await axios.get('http://localhost:3000/getmonthlyexpenses',{headers:{"authorization":token}});
+    const response  = await axios.get('http://34.201.21.163:3000/getmonthlyexpenses',{headers:{"authorization":token}});
     console.log("expenses",response.data.expenses.length);
     expenseTable.innerHTML=`
     <tr><th>Date</th><th>Description</th><th>Category</th><th>Expense</th></tr>`
@@ -20,7 +20,7 @@ async function getmonthlyexpenses(e){
 }
 async function weeklyexpenses(e){
     const expenseTable=document.getElementById('expenseTable');
-    const response  = await axios.get('http://localhost:3000/weeklyexpenses',{headers:{"authorization":token}});
+    const response  = await axios.get('http://34.201.21.163:3000/weeklyexpenses',{headers:{"authorization":token}});
     console.log("expenses",response.data.expenses.length);
     expenseTable.innerHTML=`
     <tr><th>Date</th><th>Description</th><th>Category</th><th>Expense</th></tr>`
@@ -36,7 +36,7 @@ async function weeklyexpenses(e){
 }
 async function dailyexpenses(e){
     const expenseTable=document.getElementById('expenseTable');
-    const response  = await axios.get('http://localhost:3000/dailyexpenses',{headers:{"authorization":token}});
+    const response  = await axios.get('http://34.201.21.163:3000/dailyexpenses',{headers:{"authorization":token}});
     console.log("expenses",response.data.expenses.length);
     expenseTable.innerHTML=`
     <tr><th>Date</th><th>Description</th><th>Category</th><th>Expense</th></tr>`
@@ -52,7 +52,7 @@ async function dailyexpenses(e){
 }
 
 function download(){
-        axios.get('http://localhost:3000/download', { headers: {"authorization" : token} })
+        axios.get('http://34.201.21.163:3000/download', { headers: {"authorization" : token} })
         .then((response) => {
             if(response.status === 201){
                 var a = document.createElement("a");
@@ -72,7 +72,7 @@ function download(){
 const userlist=document.getElementById('userList');
 userlist.addEventListener('click',userLists);
 async function userLists () {
-    const response  = await axios.get('http://localhost:3000/users');
+    const response  = await axios.get('http://34.201.21.163:3000/users');
     console.log("users",response);
     const expenseTable=document.getElementById('expenseTable');
     expenseTable.innerHTML="";
@@ -89,7 +89,7 @@ async function userLists () {
     expenseTable.innerHTML +=`</table>`;
 }
 async function showExpense(userId){
-        // const userExpenses  = await axios.get(`http://localhost:3000/userExpenses/${userId}`);
+        // const userExpenses  = await axios.get(`http://34.201.21.163:3000/userExpenses/${userId}`);
         // console.log(userExpenses);
         paginationuserButtons(ITEMS_PER_PAGE,userId);
         const backbtn=document.createElement('button');
@@ -127,7 +127,7 @@ localStorage.setItem('ITEMS_PER_PAGE',ITEMS_PER_PAGE);
 function paginationButtons(ITEMS_PER_PAGE) {
     const token=localStorage.getItem('token');
     console.log("pagination",token,"h",ITEMS_PER_PAGE);
-    axios.get(`http://localhost:3000/getexpense/${ITEMS_PER_PAGE}`,{headers:{"authorization":token}})
+    axios.get(`http://34.201.21.163:3000/getexpense/${ITEMS_PER_PAGE}`,{headers:{"authorization":token}})
                 .then(expenses => {  
                 console.log("pagination",expenses);
                 const parentNodeCart=document.getElementById('expensePagination');
@@ -189,7 +189,7 @@ function paginationButtons(ITEMS_PER_PAGE) {
 }
 
 function expensePagination(title,ITEMS_PER_PAGE){
-    axios.get(`http://localhost:3000/getexpense/${ITEMS_PER_PAGE}/?page=${title}`,{headers:{"authorization":token}})
+    axios.get(`http://34.201.21.163:3000/getexpense/${ITEMS_PER_PAGE}/?page=${title}`,{headers:{"authorization":token}})
         .then(expenses => {
             const expenseTable=document.getElementById('expenseTable');
             expenseTable.innerHTML=`
@@ -211,7 +211,7 @@ function expensePagination(title,ITEMS_PER_PAGE){
 function paginationuserButtons(ITEMS_PER_PAGE,userId) {
     const token=localStorage.getItem('token');
     console.log("pagination",token,"h",ITEMS_PER_PAGE,userId);
-    axios.get(`http://localhost:3000/getuserexpense/${userId}/${ITEMS_PER_PAGE}`)
+    axios.get(`http://34.201.21.163:3000/getuserexpense/${userId}/${ITEMS_PER_PAGE}`)
                 .then(expenses => {  
                 console.log("pagination",expenses);
                 const parentNodeCart=document.getElementById('expensePagination');
@@ -273,7 +273,7 @@ function paginationuserButtons(ITEMS_PER_PAGE,userId) {
 }
 
 function userExpensePagination(title,ITEMS_PER_PAGE,userId){
-    axios.get(`http://localhost:3000/getuserexpense/${userId}/${ITEMS_PER_PAGE}/?page=${title}`)
+    axios.get(`http://34.201.21.163:3000/getuserexpense/${userId}/${ITEMS_PER_PAGE}/?page=${title}`)
         .then(expenses => {
             const expenseTable=document.getElementById('expenseTable');
             expenseTable.innerHTML=`

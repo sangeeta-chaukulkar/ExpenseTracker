@@ -14,7 +14,7 @@ function addUser(e){
         phone: phone,
         password: password
     }
-    axios.post(`http://localhost:3000/signup`,data)
+    axios.post(`http://34.201.21.163:3000/signup`,data)
     .then(result=>{
         alert(result.data.message);
         if(result.data.message === 'User already exists, Please Login' || 'Successfuly signed up'){

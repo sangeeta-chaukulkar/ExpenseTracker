@@ -16,7 +16,7 @@ function addExpense(e){
       description: description,
       category: category
     }
-    axios.post(`http://localhost:3000/expense`,data,{headers:{"authorization":token}})
+    axios.post(`http://34.201.21.163:3000/expense`,data,{headers:{"authorization":token}})
     .then(result=>{
         alert(result.data.message);
         console.log(result);
@@ -41,7 +41,7 @@ function addNewExpensetoUI(expense){
 window.addEventListener('load', (e)=> {
   e.preventDefault();
   console.log(localStorage);
-  axios.get('http://localhost:3000/expense', { headers: {"authorization" : token} }).then(response => {
+  axios.get('http://34.201.21.163:3000/expense', { headers: {"authorization" : token} }).then(response => {
       if(response.status === 200){
         expenseLst.innerHTML="";
           response.data.expenses.forEach(expense => {
@@ -60,7 +60,7 @@ window.addEventListener('load', (e)=> {
   })
 });
 function deleteExpense(e, expenseid) {
-  axios.delete(`http://localhost:3000/deleteexpense/${expenseid}`, { headers: {"authorization" : token} })
+  axios.delete(`http://34.201.21.163:3000/deleteexpense/${expenseid}`, { headers: {"authorization" : token} })
   .then((response) => {
   if(response.status === 204){
           removeExpensefromUI(expenseid);
@@ -78,7 +78,7 @@ function removeExpensefromUI(expenseid){
 }
 
 document.getElementById('rayzorpay-btn').onclick = async function (e) {
-  const response  = await axios.get('http://localhost:3000/purchase/premiummembership', { headers: {"authorization" : token} });
+  const response  = await axios.get('http://34.201.21.163:3000/purchase/premiummembership', { headers: {"authorization" : token} });
   console.log(response);
   var options =
   {
@@ -96,7 +96,7 @@ document.getElementById('rayzorpay-btn').onclick = async function (e) {
    // This handler function will handle the success payment
    "handler": function (response) {
        console.log(response);
-       axios.post('http://localhost:3000/purchase/updatetransactionstatus',{
+       axios.post('http://34.201.21.163:3000/purchase/updatetransactionstatus',{
            order_id: options.order_id,
            payment_id: response.razorpay_payment_id,
        }, { headers: {"authorization" : token} }).then(() => {
