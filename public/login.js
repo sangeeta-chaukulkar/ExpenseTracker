@@ -11,7 +11,7 @@ function userLogin(e){
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     ValidateEmail(email);
-    axios.post(`http://34.201.21.163:3000/login`,{email:email,password:password})
+    axios.post(`http://localhost:3000/login`,{email:email,password:password})
     .then(result=>{
         localStorage.setItem('token',result.data.token);
         if(result){

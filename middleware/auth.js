@@ -5,12 +5,8 @@ const authenticate = (req, res, next) => {
 
     try {
         const token = req.headers["authorization"];
-        console.log(token);
-        const userid = Number(jwt.verify(token, process.env.TOKEN_SECRET).id);
-        console.log(jwt.verify(token, process.env.TOKEN_SECRET));
-        console.log(userid);
-        User.findByPk(userid).then(user => {
-            console.log(JSON.stringify(user));
+        const email = String(jwt.verify(token, process.env.TOKEN_SECRET).email);
+        User.findOne({email : email }).then(user => {
             req.user = user;
             next();
         }).catch(err => { throw new Error(err)})
@@ -18,7 +14,6 @@ const authenticate = (req, res, next) => {
       } catch(err) {
         console.log(err);
         return res.status(401).json({success: false})
-        // err
       }
 
 }

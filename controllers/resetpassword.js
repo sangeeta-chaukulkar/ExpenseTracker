@@ -5,10 +5,10 @@ const Forgotpassword = require('../models/forgotpassword');
 
 const resetpassword = (req, res) => {
     const id =  req.params.id;
-    Forgotpassword.findOne({ where : { id:id }}).then(forgotpasswordrequest => {
-        console.log(forgotpasswordrequest);
+    Forgotpassword.findOne({  _id:id }).then(forgotpasswordrequest => {
         if(forgotpasswordrequest){
-            forgotpasswordrequest.update({ active: false});
+            forgotpasswordrequest.updateOne({ active: false})
+            forgotpasswordrequest.save()
             res.status(200).send(`<html>
                                     <script>
                                         function formsubmitted(e){
@@ -34,8 +34,8 @@ const updatepassword = (req, res) => {
     try {
         const { newpassword } = req.query;
         const { resetpasswordid } = req.params;
-        Forgotpassword.findOne({ where : { id: resetpasswordid }}).then(resetpasswordrequest => {
-            User.findOne({where: { id : resetpasswordrequest.userId}}).then(user => {
+        Forgotpassword.findOne({  _id: resetpasswordid }).then(resetpasswordrequest => {
+            User.findOne({ _id : resetpasswordrequest.userId}).then(user => {
                 if(user) {
                     const saltRounds = 10;
                     bcrypt.genSalt(saltRounds, function(err, salt) {
@@ -48,7 +48,7 @@ const updatepassword = (req, res) => {
                                 console.log(err);
                                 throw new Error(err);
                             }
-                            user.update({ password: hash }).then(() => {
+                            user.updateOne({ password: hash }).then(() => {
                                 res.status(201).json({message: 'Successfuly update the new password'})
                             })
                         });

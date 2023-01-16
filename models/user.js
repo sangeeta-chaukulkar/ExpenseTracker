@@ -1,33 +1,12 @@
-const Sequelize = require('sequelize');
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const sequelize = require('../util/database');
+const userSchema = new Schema({
+  name : { type : String, required: true },
+  email : { type : String, required: true },
+  phone : { type : Number, required: true },
+  password : { type : String, required: true },
+  isPremiumUser :  { type : Boolean, required: true }
+})
 
-const User = sequelize.define('user', {
-  id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    allowNull: false,
-    primaryKey: true
-  },
-  name: {
-    type:Sequelize.STRING,
-    allowNull: false
-  },
-  email: {
-    type:Sequelize.STRING,
-    allowNull: false,
-    unique:true
-  },
-  phone:{
-    type:Sequelize.BIGINT,
-    allowNull: false,
-  },
-  password:{
-    type: Sequelize.STRING,
-    allowNull: false
-  },
-  ispremiumuser: Sequelize.BOOLEAN
-
-});
-
-module.exports = User;
+module.exports = mongoose.model('User',userSchema)

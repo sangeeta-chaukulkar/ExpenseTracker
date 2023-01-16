@@ -66,7 +66,7 @@ body {
       width:120px;
       
     }
-    #userList,#downloadexpense,#dailyexpense,#weeklyexpense,#monthlyexpense{
+    #userList,#downloadexpense,#dailyexpense,#weeklyexpense,#monthlyexpense,#premiumuser,#createexpense{
         margin:2px;
         top:2px;
         padding:14px;
@@ -75,6 +75,17 @@ body {
         background-color:#1717cb;
         color:white;
     }
+    #premiumuser{
+      margin:15px;
+      top:5px;
+      padding:5px;
+      width:180px;
+      height:35px;
+      justify-content: center;
+      background-color:#1717cb;
+      color:white;
+  }
+
     #backbutton{
       margin:4px;
       padding:4px;
@@ -119,4 +130,60 @@ body {
       text-align: left;
       background-color: #04AA6D;
       color: white;
+    }
+
+    .container {
+      border: 2px solid #6200ff;
+      border-radius: 2px;
+      top:5px;
+      padding: 20px;
+      width: 400px;
+      height:400px;
+      margin:2% auto 0;
+      text-align:center;
+      justify-content: center;
+      box-shadow:0 0 3px 0 rgba(0, 0, 0, 0.3);
+      background:#fff;
+    }
+
+  .all label {
+      font-family:verdana;
+      font-size:14px;
+      color:#0b0c00f1;
+      font-weight: bold;
+      text-align:center;
+  }
+  #para{
+      color:#750459;
+      font-weight: bold;
+  }
+  .all input[type=submit] {
+      background-color: #aa7604;
+      color: white;
+      padding: 6px 2px;
+      border: none;
+    }
+    input,select,select.option{
+    border-radius: 20px;
+    padding:12px;
+    margin: 14px;
+    width: 50%;
+    border:1px solid #999;
+    outline:none;
+
+    }
+    #da{
+      height:60px;
+      width:120px;
+    }
+    #da1{
+      height:60px;
+      width:120px;
+    }
+    #submits,#updates{
+      height:50px;
+      width:120px; 
+    }
+    .container-fluid p{
+      text-align:center;
     }

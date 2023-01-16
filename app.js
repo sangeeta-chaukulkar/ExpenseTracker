@@ -2,20 +2,13 @@ const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv');
 dotenv.config();
-// const helmet=require('helmet');
+const mongoose = require('mongoose')
 const morgan=require('morgan');
 const fs=require('fs');
-// const https=require('https');
-
-// const privateKey=fs.readFileSync('server.key');
-// const certificate=fs.readFileSync('server.cert');
-
-// var skey=require('crypto').randomBytes(64).toString('hex');
-
 const bodyParser = require('body-parser');
 
 const errorController = require('./controllers/error');
-const sequelize = require('./util/database');
+
 
 const User = require('./models/user');
 const Expense = require('./models/expense');
@@ -26,7 +19,8 @@ const accessLogStream =fs.createWriteStream(path.join(__dirname,'access.log'),{f
 const app = express();
 var cors = require('cors')
 app.use(cors())
-// app.use(helmet());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use(morgan('combined',{stream:accessLogStream}));
 
@@ -38,42 +32,29 @@ const resetpasswordRoutes = require('./routes/resetpassword');
 app.use('/purchase', purchaseRoutes);
 app.use(resetpasswordRoutes);
 
-// app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.json());
+
 
 app.use(express.static(path.join(__dirname, 'public')));
-
-// app.set('view engine', 'html');
+app.set('views', path.join(__dirname, 'public'))
+app.set('view engine', 'pug');
 app.use(adminRoutes);
 
-
-User.hasMany(Expense);
-Expense.belongsTo(User);
-
-User.hasMany(Order);
-Order.belongsTo(User);
-
-User.hasMany(Forgotpassword);
-Forgotpassword.belongsTo(User);
-
+app.use('/',(req, res, next) => {
+  next();
+});
 
 app.use((req, res)=>{
-  res.sendFile(path.join(__dirname,`public/${req.url}`));
+  res.sendFile(path.join(__dirname,`public/login.html`));
 })
 
 app.use(errorController.get404);
 
 
-sequelize
-  // .sync({ force: true })
-  .sync()
-  .then(result => {
-    //  https.createServer
-    // ({key:privateKey,cert:certificate},app)
-    // .listen(process.env.PORT || 3000);
-     app.listen(process.env.PORT || 3000);;
-
-    // console.log(result);
+mongoose.connect(`mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@ac-7fqfvf8-shard-00-00.berdqcw.mongodb.net:27017,ac-7fqfvf8-shard-00-01.berdqcw.mongodb.net:27017,ac-7fqfvf8-shard-00-02.berdqcw.mongodb.net:27017/${process.env.DB_NAME}?ssl=true&replicaSet=atlas-h3qnek-shard-0&authSource=admin&retryWrites=true&w=majority`)
+.then(result => {
+  app.listen(3000);     
+// mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@expense.berdqcw.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority
+    //  mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.gerjbiu.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority
   })
   .catch(err => {
     console.log(err);

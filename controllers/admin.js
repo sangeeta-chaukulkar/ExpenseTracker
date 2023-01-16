@@ -1,29 +1,30 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const Expense = require('../models/expense');
-const jwt = require('jsonwebtoken');
+const ForgotPassword = require('../models/forgotpassword');
 
+const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer')
 const localStorage=require("localStorage");
 const uuid = require('uuid');
 const sgMail = require('@sendgrid/mail');
 const Forgotpassword = require('../models/forgotpassword');
 const AWS=require('aws-sdk');
-const Sequelize = require('sequelize');
+const user = require('../models/user');
 
 
 exports.deleteexpense = (req, res) => {
   const expenseid = req.params.expenseid;
-  Expense.destroy({where: { id: expenseid }}).then(() => {
+  Expense.findByIdAndRemove(expenseid).then(() => {
       return res.status(204).json({ success: true, message: "Deleted Successfuly"})
   }).catch(err => {
-      console.log(err);
       return res.status(403).json({ success: true, message: "Failed"})
   })
 }
 
 exports.downloadExpenses =  async (req, res) => {
   try {
-      if(!req.user.ispremiumuser){
+      if(!req.user.isPremiumUser){
           return res.status(401).json({ success: false, message: 'User is not a premium User'})
       }
     }
@@ -35,26 +36,12 @@ exports.downloadExpenses =  async (req, res) => {
 exports.forgotpassword = async (req, res) => {
     try {
         const { email } =  req.body;
-        console.log("email",email);
-        const user = await User.findOne({where : { email }});
+        var user = await User.findOne( { email : email});
         if(user){
-            const id = uuid.v4();
-            user.createForgotpassword({ id , active: true })
-                .catch(err => {
-                    throw new Error(err)
-                })
-            sgMail.setApiKey(process.env.SENGRID_API_KEY)
-            const msg = {
-                to: email, 
-                from: 'uttamchaukulkar@gmail.com', 
-                subject: 'SendGrid email',
-                text: 'SendGrid with Node.js',
-                html: `<p>Hi</p>`,
-            }
-            sgMail
-            .send(msg)
+            const forgotUser = new ForgotPassword({active: true,expiresby: Date.now()+10,userId: user._id })
+            forgotUser.save()
             .then((response) => {
-                return res.status(response[0].statusCode).json({message: 'Hello there!', sucess: true})
+              return res.status(202).json({message: 'Hello there!',result : response, sucess: true})
             })
             .catch((error) => {
                 throw new Error(error);
@@ -73,7 +60,7 @@ exports.forgotpassword = async (req, res) => {
 exports.login = (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
-  User.findOne({ where: { email: email} })
+  User.findOne({  email : email} )
   .then(user => {
     if(!user){
       return res.status(404).json( { message: "User Not Found" });
@@ -81,9 +68,8 @@ exports.login = (req, res) => {
     bcrypt.compare(password,user.password)
     .then(isMatch=>{
       if(isMatch){
-        jwt.sign({id:user.dataValues.id}, process.env.TOKEN_SECRET, { expiresIn: '1800s' },(err,token)=>{
-          localStorage.setItem('token',JSON.stringify({token:token}));
-          if(user.dataValues.ispremiumuser){
+        jwt.sign({id : user._id, email : user.email}, process.env.TOKEN_SECRET, { expiresIn: '1800s' },(err,token)=>{
+          if(user.isPremiumUser){
             res.send({token:token,message:'Premium User'});
           }
           res.send({token:token,message:'Login successfully'}); 
@@ -106,20 +92,21 @@ exports.postUser = (req, res) => {
   const email = req.body.email;
   const phone = req.body.phone;
   const password = req.body.password;
-  User.findOne({ where: { email: email } })
+  User.findOne({  email: email })
   .then(present => {
     if(present){
       res.json({message:'User already exists, Please Login'});
     }
    bcrypt.hash(password,12)  
     .then(hashpassword=>{
-      User
-    .create({
+      const user = new User({
       name: name,
       email: email,
       phone: phone,
-      password: hashpassword
+      password: hashpassword,
+      isPremiumUser : false
     })
+    user.save()
     })
     .then(result => {
       res.json({message:'Successfuly signed up'});
@@ -129,33 +116,22 @@ exports.postUser = (req, res) => {
       console.log(err);
     });
 };
-const authenticate= (req, res,next) => {
-  try{
-    const token=req.headers('authorization');
-    const userid=Number(jwt.verify(token,process.env.TOKEN_SECRET).id);
-    User.findByPk(userid).then(user=>{
-      req.user=user;
-      next();
-    }).catch(err => {throw new Error(err)})
-  }
-  catch(err){
-    return res.status(401).json({ success: false});
-  }
-}
 
 
 exports.postExpense = (req, res) => {
   const amount = req.body.amount;
   const description = req.body.description;
   const category = req.body.category;
-  req.user.createExpense({
-      amount: amount,
-      description: description,
-      category: category
-    })
+  const expense = new Expense({
+    amount: amount,
+    description: description,
+    category: category,
+    createdAt: Date.now(),
+    userId : req.user
+  })
+  expense.save()
     .then(expense => {
       return res.status(201).json({ expense, message: 'Expenses added successfuly'});
-      
     })
     .catch(err => {
       return res.status(402).json({ message: err});
@@ -163,7 +139,7 @@ exports.postExpense = (req, res) => {
 };
 
 exports.getexpenses = (req, res)=> {
-  req.user.getExpenses().then(expenses => {
+  Expense.find({userId : req.user._id }).then(expenses => {
       return res.status(200).json({expenses, success: true})
   })
   .catch(err => {
@@ -171,58 +147,41 @@ exports.getexpenses = (req, res)=> {
   })
 }
 
-
-
-exports.getDailyexpenses = (req, res)=> {
-  const Op = Sequelize.Op;
-  // const TODAY_START = new Date().setHours(0, 0, 0, 0);
-  // const NOW = new Date();
-  const threshold = new Date(Date.now()-24*60*60*1000);
-  req.user.getExpenses({where: {createdAt:{ 
-          // [Op.gt]: TODAY_START,
-          // [Op.lt]: NOW
-          [Op.gt]: threshold
-        }}})
-      .then(expenses => {
-      return res.status(200).json({expenses, success: true})
-  })
-  .catch(err => {
-      return res.status(402).json({ error: err, success: false})
-  })
+exports.updateExpense = async  (req, res)=> {
+  const id = req.params.expenseid;
+  Expense.findOne({  _id:id }).then(updaterequest => {
+    if(updaterequest){
+      updaterequest.updateOne({
+        amount : req.body.amount,
+        description:req.body.description,
+        category:req.body.category,
+        createdAt: req.body.createdAt})
+        .then(() => {
+          res.status(200).json({message: 'Successfuly update', success: true})
+        })
+    }
+      else{
+          return res.status(404).json({ error: 'Updation failed', success: false})
+      }
+    })
 }
 
-
-exports.getWeeklyexpenses = (req, res)=> {
-  const Op = Sequelize.Op;
-  const threshold = new Date(Date.now()-7*24*60*60*1000);
-  console.log(threshold);
-  req.user.getExpenses({where: {createdAt:{ 
-    [Op.gt]: threshold
-        }}})
-      .then(expenses => {
-      return res.status(200).json({expenses, success: true})
-  })
-  .catch(err => {
-      return res.status(402).json({ error: err, success: false})
-  })
-}
-exports.getMonthlyexpenses = (req, res)=> {
-  const Op = Sequelize.Op;
-  const threshold = new Date(Date.now()-30*24*60*60*1000);
-  console.log(threshold);
-  req.user.getExpenses({where: {createdAt:{ 
-    [Op.gt]: threshold
-        }}})
-      .then(expenses => {
-      return res.status(200).json({expenses, success: true})
-  })
-  .catch(err => {
-      return res.status(402).json({ error: err, success: false})
-  })
-}
+exports.getleaderboard = (req, res, next) => {
+  Expense.aggregate([{
+    $group: { _id : "$userId",
+    total : { $sum : "$amount"}
+  }
+  }])
+    .then(expenses => {
+      if(!expenses){
+        return res.status(404).json( { message: "Not Found" });
+      }
+      res.json({expenses});
+    })
+};
 
 exports.getUserExpenses = (req, res, next) => {
-  Expense.findAll({ where: { userId: req.params.userid } })
+  Expense.find({  userId: req.params.userid } )
     .then(expenses => {
       if(!expenses){
         return res.status(404).json( { message: "Not Found" });
@@ -231,19 +190,8 @@ exports.getUserExpenses = (req, res, next) => {
     })
 };
 
-exports.getUserExpensess = (req, res, next) => {
-  const userId=req.body.userId;
-  Expense.findOne({ where: { userId: userId } })
-    .then(expenses => {
-      if(!expenses){
-        return res.status(404).json( { message: "Not Found" });
-      }
-      res.json({expenses});
-    })
-};
-
-exports.getUsers = (req, res, next) => {
-  User.findAll()
+exports.getUser = (req, res, next) => {
+  User.find({_id : req.params.id})
     .then(users => {
       res.json({users});
     })
@@ -282,10 +230,9 @@ function uploadToS3(data,filename){
 }
 exports.downloadexpense= async (req, res, next) => {
   try{
-    const expenses=await req.user.getExpenses();
-    console.log(expenses);
+    const expenses=await getUserExpenses();
     const stringnifiedExpenses=JSON.stringify(expenses);
-    const userid=req.user.id;
+    const userid=req.user._id;
     const filename=`Expense${userid}/${new Date()}.txt`;
     const fileUrl= await uploadToS3(stringnifiedExpenses,filename);
     res.status(201).json({fileUrl,success:true})
@@ -295,75 +242,37 @@ exports.downloadexpense= async (req, res, next) => {
 
   }
 }
-
-exports.getExpense=  (req, res, next) => {
-  const page = +req.query.page || 1;
-  const ITEMS_PER_PAGE = parseInt(req.params.items_per_page);
+exports.getExpenset = (req, res)=> {
+  const th= req.params.threshold;
+  var threshold;
+  if(th == "month"){ threshold = new Date(Date.now()-30*24*60*60*1000); }
+  if(th == "daily"){ threshold = new Date(Date.now()-1*24*60*60*1000); }
+  if(th == "weekly"){ threshold = new Date(Date.now()-7*24*60*60*1000); }
+  let page = +req.query.page || 1;
+  let ITEMS_PER_PAGE = parseInt(req.params.items_per_page);
   let totalItems;
-  req.user.getExpenses()
-  // Expense.count({ where: { userId : req.user} })
-    .then(numExpense => {
-      numExpense=JSON.parse(JSON.stringify(numExpense))
-      totalItems = Object. keys(numExpense).length;
-      console.log("totalItems",totalItems);
-      console.log(Math.ceil(totalItems / ITEMS_PER_PAGE));
-      console.log(ITEMS_PER_PAGE,req.user.id,page );
-      return Expense.findAll({ where: { userId : req.user.id }, offset: ((page - 1) * ITEMS_PER_PAGE) , limit: ITEMS_PER_PAGE });
-      // return req.user.getExpenses({offset: ((page - 1) * ITEMS_PER_PAGE) , limit: ITEMS_PER_PAGE} );
-    }) 
-    .then(expenses => {
-      // console.log(count);
-      res.json({
-        currentPage:page,
-        prods: expenses,
-        totalexpenses: totalItems,
-        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
-        hasPreviousPage: page > 1,
-        nextPage: page + 1,
-        previousPage: page - 1,
-        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
-      });
-    })
-    .catch(err => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
+  Expense.find({userId : req.user._id, createdAt: { $gte: threshold }})
+  .then(numExpense => {
+    numExpense=JSON.parse(JSON.stringify(numExpense))
+    totalItems = Object.keys(numExpense).length;
+    return Expense.find({  userId : req.user._id, createdAt: { $gte: threshold } }).skip((page - 1) * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE)
+  }) 
+  .then(expenses => {
+    res.json({
+      currentPage:page,
+      prods: expenses,
+      totalexpenses: totalItems,
+      hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+      hasPreviousPage: page > 1,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
     });
+  })
+  .catch(err => {
+    return res.status(500).json({ error: err, success: false})
+  })
+
 }
 
-exports.getUserExpense=  (req, res, next) => {
-  const page = +req.query.page || 1;
-  const ITEMS_PER_PAGE = parseInt(req.params.items_per_page);
-  const userid = parseInt(req.params.userid);
-  let totalItems;
-   Expense.findAll({ where: { userId: userid } })
-  // Expense.count({ where: { userId : req.user} })
-    .then(numExpense => {
-      numExpense=JSON.parse(JSON.stringify(numExpense))
-      totalItems = Object. keys(numExpense).length;
-      console.log("totalItems",totalItems);
-      console.log(Math.ceil(totalItems / ITEMS_PER_PAGE));
-      console.log(ITEMS_PER_PAGE,userid,page );
-      return Expense.findAll({ where: { userId : userid }, offset: ((page - 1) * ITEMS_PER_PAGE) , limit: ITEMS_PER_PAGE });
-      // return req.user.getExpenses({offset: ((page - 1) * ITEMS_PER_PAGE) , limit: ITEMS_PER_PAGE} );
-    }) 
-    .then(expenses => {
-      // console.log(count);
-      res.json({
-        currentPage:page,
-        prods: expenses,
-        totalexpenses: totalItems,
-        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
-        hasPreviousPage: page > 1,
-        nextPage:  page + 1,
-        previousPage: page - 1,
-        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
-      });
-    })
-    .catch(err => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
-    });
-}
 
